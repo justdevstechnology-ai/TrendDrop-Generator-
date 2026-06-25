@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrendDrop Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <header>
+    <div class="logo-group">
+      <span class="material-icons-round" style="color:var(--primary)">bolt</span>
+      <span>Tenora BioStores</span>
+    </div>
+    <nav>
+      <a href="dashboard.html" class="nav-link"><span class="material-icons-round">analytics</span> Admin Console</a>
+    </nav>
+  </header>
+
+  <main class="builder-container">
+    <section class="panel-card">
+      <h2 class="section-title"><span class="material-icons-round">tune</span> Build Merchant Profile</h2>
+      
+      <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 10px 14px; border-radius: 6px; margin-bottom: 20px; font-size: 0.82rem; color: #1e40af;">
+        🚀 Building a bio-store is instant and free! 
+        <button type="button" id="inlineLoginTrigger" style="background:none; border:none; color:#2563eb; font-weight:700; text-decoration:underline; cursor:pointer; font-size:0.82rem; margin-left:4px;">
+          Returning user? Log in here
+        </button>
+      </div>
+
+      <form id="storeGeneratorForm">
+        <div class="form-group">
+          <label>Business / Brand Name</label>
+          <input type="text" id="bizName" placeholder="e.g., Kicks by Joseph" required>
+        </div>
+
+        <div class="form-group">
+          <label>Brand Tagline / Pitch</label>
+          <input type="text" id="bizTagline" placeholder="e.g., Premium sneakers delivered across Nigeria">
+        </div>
+
+        <div class="form-group">
+          <label>Business Logo</label>
+          <input
+            type="file"
+            id="merchantLogo"
+            accept="image/*">
+          <small style="color:var(--text-muted); font-size: 0.7rem; display:block; margin-top:4px;">
+            JPG, PNG or WebP accepted. Automatically optimized before upload. Recommended size: under 5MB.
+          </small>
+        </div>
+
+        <div class="form-group" style="background: #f8fafc; padding: 12px; border: 1px dashed var(--border); border-radius: 6px; margin-bottom: 16px;">
+          <label style="color: var(--primary); font-weight: 700; display: flex; align-items: center; gap: 4px;">
+            <span class="material-icons-round" style="font-size:1.1rem">videocam</span> Cinematic Video URL (Optional)
+          </label>
+          <input type="url" id="bizVideoUrl" placeholder="https://yourbucket.com/promo.mp4">
+          <small style="color: var(--text-muted); font-size: 0.7rem; display: block; margin-top: 4px;">
+            Paste a direct link to an MP4 video (under 5MB recommended) to enable an interactive cinematic intro banner.
+          </small>
+        </div>
+
+        <div class="sub-section-header">🔗 Communication Channels</div>
+        
+        <div class="form-group">
+          <label>WhatsApp Contact Number (Include 234 prefix)</label>
+          <input type="text" id="bizWhatsapp" placeholder="2347039105089" required>
+        </div>
+
+        <div class="form-group">
+          <label>Instagram Username</label>
+          <input type="text" id="bizInstagram" placeholder="e.g., @yourbrand">
+        </div>
+
+        <div class="form-group">
+          <label>Facebook Profile URL</label>
+          <input type="url" id="bizFacebook" placeholder="https://facebook.com/yourbrand">
+        </div>
+
+        <div class="sub-section-header">🛍️ Store Showcase Products (Optional)</div>
+        
+        <div id="productInputContainer" style="display: flex; flex-direction: column; gap: 10px;">
+          <div class="product-input-row">
+            <input type="text" class="prod-name" placeholder="Item Name">
+            <input type="text" class="prod-price" placeholder="Price (₦)">
+            <input type="file" class="prod-image" accept="image/*">
+          </div>
+        </div>
+
+        <button type="button" class="nav-link" id="addMoreProductBtn" style="margin: 15px 0 20px 0; font-size:0.8rem; background:#f1f5f9; width:100%; justify-content:center;">
+          <span class="material-icons-round">add</span> Add Another Catalog Item
+        </button>
+
+        <div style="background:#f8fafc; border:2px solid var(--primary); padding:16px; border-radius:8px; margin-top:20px;">
+          <strong style="font-size:0.85rem; color:var(--primary); display:block; margin-bottom:8px;">🚀 Platform Tier Deployment</strong>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+            <label style="background:white; padding:10px; border:1px solid var(--border); border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; gap:6px; align-items:center;">
+              <input type="radio" name="tierSelection" value="Free" checked>
+              <div><strong>Free Tier</strong><p style="font-size:0.68rem; color:var(--text-muted)">Displays Network Ads</p></div>
+            </label>
+            <label style="background:white; padding:10px; border:1px solid var(--primary); border-radius:6px; cursor:pointer; font-size:0.8rem; display:flex; gap:6px; align-items:center;">
+              <input type="radio" name="tierSelection" value="Premium">
+              <div><strong>Premium Live</strong><p style="font-size:0.68rem; color:var(--primary)">₦5,000 — Zero Ads</p></div>
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-action" style="margin-top:24px;">
+          <span class="material-icons-round">rocket_launch</span> Compile and Launch Link
+        </button>
+      </form>
+    </section>
+
+    <section class="preview-sticky-wrapper">
+      <div class="phone-mockup" id="simulatorFrame">
+        
+        <div id="previewVideoContainer" style="display: none; width: 100%; background: #000; aspect-ratio: 16/9; position: relative;">
+          <video id="previewVideoElement" muted autoplay loop playsinline style="width: 100%; height: 100%; object-fit: cover;"></video>
+          <div style="position: absolute; bottom: 6px; left: 6px; background: rgba(0,0,0,0.6); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.6rem;">🎥 Live Promo Active</div>
+        </div>
+
+        <img
+          id="previewLogo"
+          src=""
+          alt="Preview Logo"
+          style="
+            width:80px;
+            height:80px;
+            border-radius:50%;
+            object-fit:cover;
+            display:none;
+            margin:16px auto;
+            border:3px solid white;
+            box-shadow:0 4px 10px rgba(0,0,0,.15);
+          ">
+
+        <div class="live-profile-header">
+          <div class="live-business-name" id="previewName">Your Business Name</div>
+          <div class="live-tagline" id="previewTagline">Your business definition metrics value.</div>
+        </div>
+        <div class="live-social-row">
+          <span class="social-icon-badge" id="previewInstaLink" style="display:none;">📷</span>
+          <span class="social-icon-badge" id="previewFbLink" style="display:none;">🌐</span>
+        </div>
+        <div class="live-catalog-container" id="previewCatalog">
+          <p style="text-align:center; color:var(--text-muted); font-size:0.8rem; margin-top:40px;">No items currently in display catalog grid.</p>
+        </div>
+        <div class="live-footer-branding">
+          <p>Powered by <strong>Tenora Labs</strong></p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2026 Tenora Labs. All rights reserved.</p>
+    <div>
+      <button id="btnPrivacy">Privacy Policy</button>
+      <button id="btnTerms">Terms of Service</button>
+    </div>
+  </footer>
+
+  <div class="modal-overlay" id="authGateModal" style="display: none;">
+    <div class="modal-box" style="max-width: 400px; text-align: center; position: relative; padding-top: 40px;">
+      
+      <button type="button" id="closeAuthModalBtn" style="position: absolute; right: 15px; top: 15px; background: #e2e8f0; border: none; font-size: 1.2rem; font-weight: 700; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #475569;">&times;</button>
+
+      <span class="material-icons-round" style="font-size: 3rem; color: var(--primary); margin-bottom: 12px;">storefront</span>
+      <h3 id="authModalHeading">Your Store is Ready!</h3>
+      <p id="authModalDescription">Would you like to create a free account so you can edit your prices, products, and track orders later?</p>
+      
+      <div id="authTabsRow" style="display: flex; gap: 10px; margin: 16px 0; background: #f1f5f9; padding: 4px; border-radius: 6px;">
+        <button type="button" id="tabSignUp" style="flex: 1; padding: 8px; border: none; background: white; border-radius: 4px; font-weight: 600; font-size: 0.8rem; cursor: pointer;">Sign Up</button>
+        <button type="button" id="tabLogin" style="flex: 1; padding: 8px; border: none; background: transparent; border-radius: 4px; font-weight: 600; font-size: 0.8rem; cursor: pointer; color: var(--text-muted);">Login</button>
+      </div>
+
+      <div id="authFields" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 14px;">
+        <input type="email" id="authEmail" placeholder="Enter your email" style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
+        
+        <div style="position: relative; width: 100%; display: block;" id="passwordFieldWrapper">
+          <input type="password" id="authPassword" placeholder="Enter account password" style="width: 100%; padding: 12px 40px 12px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.9rem;">
+          <span class="material-icons-round" id="passwordToggleEye" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); font-size: 1.2rem; user-select: none;">visibility</span>
+        </div>
+
+        <p id="passwordComplexityHint" style="font-size: 0.72rem; color: var(--text-muted); text-align: left; margin: -4px 2px 4px 2px; line-height: 1.3;">
+          💡 Must be at least 10 characters with: an uppercase letter, lowercase letter, number, and a special symbol.
+        </p>
+
+        <div id="forgotPasswordContainer" style="display: none; text-align: right; width: 100%;">
+          <button type="button" id="btnForgotPasswordTrigger" style="background: none; border: none; color: var(--primary); font-size: 0.78rem; font-weight: 700; cursor: pointer; text-decoration: underline;">
+            Forgot Password?
+          </button>
+        </div>
+      </div>
+
+      <button type="button" class="btn-action" id="btnSubmitAuth" style="margin-bottom: 10px;">
+        <span class="material-icons-round">cloud_done</span> Create Account & Launch
+      </button>
+      
+      <button type="button" id="btnGuestLaunch" style="background: transparent; border: none; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; cursor: pointer; text-decoration: underline;">
+        No thanks, just launch as guest
+      </button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="privacyModal">
+    <div class="modal-box">
+      <h3>Privacy Policy</h3>
+      <p><strong>Effective Date: June 2026</strong></p>
+      <p>At Tenora Labs, we value your trust. This policy governs how we collect and process data structures across your generated bio storefront parameters.</p>
+      <button class="btn-action" id="closePrivacyBtn" style="margin-top:16px;">I Understand</button>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="termsModal">
+    <div class="modal-box">
+      <h3>Terms of Service</h3>
+      <p><strong>Last Updated: June 2026</strong></p>
+      <p>By executing layout compilations via Tenora Labs, you consent to fulfill the architecture regulations detailed below.</p>
+      <button class="btn-action" id="closeTermsBtn" style="margin-top:16px;">Accept Parameters</button>
+    </div>
+  </div>
+  <script type="module" src="event-core.js"></script>
+</body>
+</html>
