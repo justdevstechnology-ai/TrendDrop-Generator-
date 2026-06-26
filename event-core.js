@@ -1,16 +1,19 @@
 // BLOCKER 4 RESOLVED: Cleaned and completely validated structural implementation imports
-import { 
-  CoreState, 
-  validateProductCatalog, 
-  validateStoreMetadata, 
-  checkPasswordStrength, 
-  supabaseAuthProxy, 
+import {
+  CoreState,
+  validateProductCatalog,
+  validateStoreMetadata,
+  checkPasswordStrength,
+  supabaseAuthProxy,
   deployStoreNode,
   optimizeImage,
-  showSizeWarning,
+  showSizeWarning
+} from './app-core.js';
+
+import {
   SUPABASE_URL,
   SUPABASE_ANON_KEY
-} from './app-core.js';
+} from './config.js';
 
 window.addEventListener('DOMContentLoaded', () => {
   // Bind presentation monitoring changes
@@ -240,21 +243,31 @@ function executeProductWebShareAction(productTitle) {
 }
 
 // Internal asset distribution gateway helper to push binary artifacts up to Supabase storage buckets
+// Internal asset distribution gateway helper to push binary artifacts up to Supabase Storage
 async function uploadAssetToStorageBucket(fileBlob, pathString) {
-  const destinationUrl = `${SUPABASE_URL}/storage/v1/object/public_merchant_assets/${pathString}`;
-  const uploadResponse = await fetch(`${SUPABASE_URL}/storage/v1/object/merchant_assets/${pathString}`, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-      'apikey': SUPABASE_ANON_KEY,
-      'Content-Type': 'image/webp'
-    },
-    body: fileBlob
-  });
-  if (!uploadResponse.ok && uploadResponse.status !== 400) {
-    throw new Error('Cloud storage infrastructure upload rejected.');
+
+  const bucket = 'merchant_assets';
+
+  const uploadResponse = await fetch(
+    `${SUPABASE_URL}/storage/v1/object/${bucket}/${pathString}`,
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_ANON_KEY,
+        'Content-Type': 'image/webp',
+        'x-upsert': 'true'
+      },
+      body: fileBlob
+    }
+  );
+
+  if (!uploadResponse.ok) {
+    const errorText = await uploadResponse.text();
+    throw new Error(`Storage upload failed: ${errorText}`);
   }
-  return destinationUrl;
+
+  return `${SUPABASE_URL}/storage/v1/object/public/${bucket}/${pathString}`;
 }
 
 async function handleFormIntercept(e) {
