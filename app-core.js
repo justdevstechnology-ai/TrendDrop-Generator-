@@ -96,16 +96,49 @@ export const supabaseAuthProxy = {
 
 async function executeNativeFetch(endpoint, bodyData) {
   try {
-    const res = await fetch(`${TENORA_URL}/auth/v1/${endpoint}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'apikey': TENORA_ANON_KEY },
-      body: JSON.stringify(bodyData)
-    });
+
+    const res = await fetch(
+      `${SUPABASE_URL}/auth/v1/${endpoint}`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': SUPABASE_ANON_KEY
+        },
+        body: JSON.stringify(bodyData)
+      }
+    );
+
     const data = await res.json();
-    if (!res.ok) return { data: { user: null, session: null }, error: data }; 
-    return { data: { user: data.user || null, session: data }, error: null };
-  } catch (err) { 
-    return { data: { user: null, session: null }, error: err }; 
+
+    if (!res.ok) {
+      return {
+        data: {
+          user: null,
+          session: null
+        },
+        error: data
+      };
+    }
+
+    return {
+      data: {
+        user: data.user || null,
+        session: data
+      },
+      error: null
+    };
+
+  } catch (err) {
+
+    return {
+      data: {
+        user: null,
+        session: null
+      },
+      error: err
+    };
+
   }
 }
 
@@ -119,30 +152,52 @@ export async function deployStoreNode(payload) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 15000);
 
-  // Fallback endpoint route logic block to maintain development velocity before deploying Edge Functions
-  const targetUrl = `${SUPABASE_URL}/rest/v1/merchant_stores`;
-  const headers = {
-    'Content-Type': 'application/json',
-    'apikey': SUPABASE_ANON_KEY,
-    'Prefer': 'return=representation'
-  };
-
   try {
-    const res = await fetch(targetUrl, {
-      method: 'POST',
-      headers: headers,
-      body: JSON.stringify(payload),
-      signal: controller.signal
-    });
+
+    let accessToken = "";
+
+    if (window.supabase) {
+      const {
+        data: { session }
+      } = await window.supabase.auth.getSession();
+
+      accessToken = session?.access_token || "";
+    }
+
+    const headers = {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_ANON_KEY,
+      "Prefer": "return=representation"
+    };
+
+    if (accessToken) {
+      headers["Authorization"] = `Bearer ${accessToken}`;
+    }
+
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/merchant_stores`,
+      {
+        method: "POST",
+        headers,
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      }
+    );
 
     clearTimeout(timeoutId);
+
     const result = await res.json();
-    
-    if (!res.ok) throw new Error(result.message || "Compilation database synchronization broken.");
-    
+
+    if (!res.ok) {
+      throw new Error(result.message || result.error || "Failed to create store.");
+    }
+
     CoreState.pendingStorePayload = null;
+
     return result[0];
+
   } finally {
+    clearTimeout(timeoutId);
     CoreState.creatingStore = false;
   }
 }
